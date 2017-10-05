@@ -105,6 +105,7 @@ static const char *scripts[] = {
     "/app/bin/oled_hijack/imei_change.sh",
     "/app/bin/oled_hijack/remote_access.sh",
     "/app/bin/oled_hijack/usb_mode.sh",
+    "/app/bin/oled_hijack/band_selection.sh",
     OLED_CUSTOM,
     NULL
 };
@@ -116,9 +117,13 @@ static const char *network_mode_mapping[] = {
     "Auto",
     // 1
     "GSM Only",
+    // 2
     "UMTS Only",
+    // 3
     "LTE Only",
+    // 4
     "LTE -> UMTS",
+    // 5
     "LTE -> GSM",
     // 6
     "UMTS -> GSM",
@@ -173,6 +178,22 @@ static const char *usb_mode_mapping[] = {
     NULL
 };
 
+static const char *band_selection_mapping[] = {
+    // 0
+    "Auto",
+    // 1
+    "LTE B1",
+    // 2
+    "LTE B3",
+    // 3
+    "LTE B3&B7",
+    // 4
+    "LTE B5",
+    // 5
+    "LTE B7",
+    NULL
+};
+
 static const char *enabled_disabled_mapping[] = {
     // 0
     "Disabled",
@@ -188,6 +209,7 @@ struct menu_s {
     uint8_t imei_change;
     uint8_t remote_access;
     uint8_t usb_mode;
+    uint8_t band_selection;
     uint8_t custom;
 } menu_state;
 
@@ -252,6 +274,9 @@ static void update_menu_state() {
                 menu_state.usb_mode = ret;
                 break;
             case 6:
+                menu_state.band_selection = ret;
+                break;
+            case 7:
                 menu_state.custom = ret;
                 break;
         }
@@ -361,6 +386,10 @@ static void create_and_write_menu(int menu_item) {
             snprintf(tempbuf, 1024 - 1, "%s\n%s", "# USB Mode:", current_menu_buf);
             break;
         case 6:
+            create_menu_item(current_menu_buf, band_selection_mapping, menu_state.band_selection);
+            snprintf(tempbuf, 1024 - 1, "%s\n%s", "# Band Selection:", current_menu_buf);
+            break;
+        case 7:
             create_menu_item(current_menu_buf, enabled_disabled_mapping, menu_state.custom);
             snprintf(tempbuf, 1024 - 1, "%s\n%s", "# Custom Script:", current_menu_buf);
             break;
